@@ -205,19 +205,25 @@ void generalSearch(matrix& initial, matrix& goal, int (*heuristic) (matrix&, mat
 	priority_queue<node, vector<node>, decltype(compare)> nodes(compare);
 	nodes.push({0,0,initial,id(initial)});
 
+	int maxFrontier = nodes.size();
 
 	while(!nodes.empty()) {
 		node currNode = nodes.top();
 		nodes.pop();
 		//visit node only when pulling from queue
 		visited.insert(id(currNode.state));
+		if(nodes.size() > maxFrontier) {
+			maxFrontier = nodes.size();
+		}
+		cout << "Best state to expand with depth (g(n)) " << currNode.depth << " and heuristic (h(n)) " << currNode.priority-currNode.depth << endl;
+		cout << id(currNode.state);
 		//if we have found the goal state, print the search result (I know I could return the values but I dont wan't to have to deal with nonhomogeneous data types)
 		if(currNode.state == goal) {
 			milliseconds end = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 			cout << currNode.path << endl;
 			cout << "Solution found at depth " << currNode.depth << endl;
 			cout << "Visited " << visited.size() << " nodes" << endl;
-			cout << nodes.size() << " in frontier"<< endl;
+			cout << maxFrontier << " in frontier"<< endl;
 			cout << "Search took " << (end.count()-start.count()) << " milliseconds" << endl;
 			return;
 		}
