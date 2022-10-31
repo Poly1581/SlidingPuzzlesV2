@@ -415,6 +415,133 @@ void monteCarlo(int size, int simulations, int (*heuristic) (matrix&, matrix&)) 
 	cout << "]" << endl;
 }
 
+vector<matrix> testMatrices = {
+	{
+		{1,2,3},
+		{4,5,6},
+		{7,8,0}
+	},
+	{
+		{1,2,3},
+		{4,5,6},
+		{0,7,8},
+	},
+	{
+		{1,2,3},
+		{5,0,6},
+		{4,7,8},
+	},
+	{
+		{1,3,6},
+		{5,0,2},
+		{4,7,8},
+	},
+	{
+		{1,3,6},
+		{5,0,7},
+		{4,8,2},
+	},
+	{
+		{1,6,7},
+		{5,0,3},
+		{4,8,2},
+	},
+	{
+		{7,1,2},
+		{4,8,5},
+		{6,3,0},
+	},
+	{
+		{0,7,2},
+		{4,6,1},
+		{3,5,8},
+	}	
+};
+
+void testCases(int (*heuristic) (matrix&, matrix&)) {
+	//keep track of the number of the total number of states per depth, the nubmer of frontier nodes per depth, and the number of visited nodes per depth
+	vector<unsigned int> numDepth = {};
+	vector<long unsigned > numFrontier = {};
+	vector<long unsigned int> numVisited = {};
+	vector<long int> numTime = {};
+	matrix goal = makeMatrix(3, "solved");
+	for(matrix initial:testMatrices) {
+		//make a random matrix and solve it
+		searchResult solution = generalSearch(initial, goal, heuristic);
+		//expand the count vectors
+		while(numDepth.size() <= solution.depth) {
+			numDepth.push_back(0);
+			numFrontier.push_back(0);
+			numVisited.push_back(0);
+			numTime.push_back(0);
+		}
+		//add data from solution to vectors
+		numDepth.at(solution.depth)++;
+		numFrontier.at(solution.depth)+=solution.frontier;
+		numVisited.at(solution.depth)+=solution.visited;
+		numTime.at(solution.depth)+=solution.time;
+	}
+	vector<double> averageFrontier = {};
+	vector<double> averageVisited = {};
+	vector<double> averageTime = {};
+	//take average of each vector
+	for(int depth = 0; depth < numDepth.size(); depth++) {
+		while(averageFrontier.size() <= depth) {
+			averageFrontier.push_back(0);
+			averageVisited.push_back(0);
+			averageTime.push_back(0);
+		}
+		averageFrontier.at(depth) = (double)numFrontier.at(depth)/(double)numDepth.at(depth);
+		averageVisited.at(depth) = (double)numVisited.at(depth)/(double)numDepth.at(depth);
+		averageTime.at(depth) = (double)numTime.at(depth)/(double)numDepth.at(depth);
+	}
+	//print outcomes
+	cout << "DEPTH:" << endl;
+	cout << "[";
+	for(int d = 0; d < numDepth.size(); d++) {
+		if(numDepth.at(d) != 0) {
+			cout << d;
+			if(d != numDepth.size()-1) {
+				cout << ", ";
+			}
+		}
+	}
+	cout << "]" << endl;
+	cout << "VISITED:" << endl;
+	cout << "[";
+	for(int d = 0; d < numDepth.size(); d++) {
+		if(numDepth.at(d) != 0) {
+			cout  << averageVisited.at(d);
+			if(d != numDepth.size()-1) {
+				cout << ", ";
+			}
+		}
+	}
+	cout << "]" << endl;
+	cout << "FRONTIER:" << endl;
+	cout << "[";
+	for(int d = 0; d < numDepth.size(); d++) {
+		if(numDepth.at(d) != 0) {
+			cout << averageFrontier.at(d);
+			if(d != numDepth.size()-1) {
+				cout << ", ";
+			}
+		}
+	}
+	cout << "]" << endl;
+	cout << "TIME:" << endl;
+	cout << "[";
+	for(int d = 0; d < numDepth.size(); d++) {
+		if(numDepth.at(d) != 0) {
+			cout << averageTime.at(d);
+			if(d != numDepth.size()-1) {
+				cout << ", ";
+			}
+		}
+	}
+	cout << "]" << endl;
+}
+
 //driver function
 int main() {
 	srand(time(NULL));
