@@ -26,7 +26,7 @@ struct position {
 		return (a.row == b.row) && (a.col == b.col);
 	}
 	friend bool operator!=(const position& a, const position& b) {
-		return (a.row != b.row) || (a.col != b.col);
+		return (a.row != b.row) ||  (a.col != b.col);
 	}
 	//check to see if row and col of position are greater than value
 	friend bool operator<(const int l, const position& p) {
@@ -74,7 +74,7 @@ matrix makeMatrix(int size, string type) {
 				r.push_back(size*row+col+1);
 			//take user input for the tile data
 			} else if(type == "user") {
-				cout << "Enter tile at row " << row << ", and col " << col << endl;
+				cout << "Enter tile at row " << row << ", and col " << col << "\\newline" << endl;
 				int input;
 				cin >> input;
 				r.push_back(input);
@@ -181,20 +181,26 @@ void changeParity(matrix& m) {
 	}
 }
 
-//get the id of a matrix by joining tiles in a row with "|" and rows with newline
+//get the id of a matrix by joining tiles in a row with "\textbar " and rows with newline
 //used for printing, tracking paths, and hash table to keep track of visited states
 string id(matrix& m) {
 	int size = m.size();
 	string id = "";
 	for(int row = 0; row < size; row++) {
 		vector<int> r = m.at(row);
+		if(row == 0) {
+			id+= "{\\noindent ";
+		}
 		for(int col = 0; col < size; col++) {
 			id+=to_string(r.at(col));
 			if(col != size-1) {
-				id+="|";
+				id+="\\textbar ";
 			}
 		}
-		id+="\n";
+		if(row == 0) {
+			id+= "}";
+		}
+		id+="\\newline\n";
 	}
 	id+="\n";
 	return id;
@@ -289,8 +295,8 @@ searchResult generalSearch(matrix& initial, matrix& goal, int (*heuristic) (matr
 		if(nodes.size() > maxFrontier) {
 			maxFrontier = nodes.size();
 		}
-		// cout << "Best state to expand with depth (g(n)) " << currNode.depth << " and heuristic (h(n)) " << currNode.priority-currNode.depth << endl;
-		// cout << id(currNode.state);
+		cout << "{\\noindent Best state to expand with depth (g(n)) " << currNode.depth << " and heuristic (h(n)) " << currNode.priority-currNode.depth << "\\newline}" << endl;
+		cout << id(currNode.state);
 		//if we have found the goal state, print the search result (I know I could return the values but I dont wan't to have to deal with nonhomogeneous data types)
 		if(currNode.state == goal) {
 			milliseconds end = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
@@ -311,15 +317,6 @@ searchResult generalSearch(matrix& initial, matrix& goal, int (*heuristic) (matr
 	cout << "NO SOLUTION FOUND" << endl;
 	return {0,0,0,0};
 }
-
-// struct searchResult {
-// 	unsigned int depth = 0;
-// 	long unsigned int frontier = 0;
-// 	long unsigned int visited = 0;
-// 	long int time = 0;
-// 	string path;
-// };
-
 
 
 //monte carlo simulation
@@ -545,18 +542,18 @@ void testCases(int (*heuristic) (matrix&, matrix&)) {
 //driver function
 int main() {
 	srand(time(NULL));
-	cout << "What size puzzle would you like to solve?" << endl;
+	cout << "{\\noindent What size puzzle would you like to solve?\\newline}" << endl;
 	int size = 0;
 	cin >> size;
-	cout << "What heuristic would you like to use?" << endl;
-	cout << "1:\tUniform Cost" << endl;
-	cout << "2:\tMisplaced Tile" << endl;
-	cout << "3:\tManhattan Distance" << endl;
+	cout << "What heuristic would you like to use?\\newline" << endl;
+	cout << "1:\tUniform Cost\\newline" << endl;
+	cout << "2:\tMisplaced Tile\\newline" << endl;
+	cout << "3:\tManhattan Distance\\newline" << endl;
 	int heuristic = 0;
 	cin >> heuristic;
-	cout << "Would you like to use your own matrix or a random one?" << endl;
-	cout << "1:\tUser matrix" << endl;
-	cout << "2:\tRandom matrix" << endl;
+	cout << "Would you like to use your own matrix or a random one?\\newline" << endl;
+	cout << "1:\tUser matrix\\newline" << endl;
+	cout << "2:\tRandom matrix\\newline" << endl;
 	int random = 0;
 	cin >> random;
 
@@ -580,11 +577,11 @@ int main() {
 	} else if(heuristic == 3) {
 		solution = generalSearch(initial, goal, &manhattanDistance);
 	}
-	cout << "Solution found" << endl;
-	cout << "Path" << endl;
+	cout << "{\\noindent Solution found\\newline}" << endl;
+	cout << "Path\\newline" << endl;
 	cout << solution.path;
-	cout << "Depth of solution " << solution.depth << endl;
-	cout << "Number of visited nodes " << solution.visited << endl;
-	cout << "Max frontier size " << solution.frontier << endl;
-	cout << "Search took " << solution.time << " milliseconds" << endl;
+	cout << "{\\noindent Depth of solution " << solution.depth << "\\newline}"<< endl;
+	cout << "Number of visited nodes " << solution.visited << "\\newline" << endl;
+	cout << "Max frontier size " << solution.frontier << "\\newline" << endl;
+	cout << "Search took " << solution.time << " milliseconds\\newline" << endl;
 }
