@@ -74,7 +74,7 @@ matrix makeMatrix(int size, string type) {
 				r.push_back(size*row+col+1);
 			//take user input for the tile data
 			} else if(type == "user") {
-				cout << "Enter tile at row " << row << ", and col " << col << "\\newline" << endl;
+				cout << "Enter tile at row " << row << ", and col " << col << endl;
 				int input;
 				cin >> input;
 				r.push_back(input);
@@ -188,19 +188,13 @@ string id(matrix& m) {
 	string id = "";
 	for(int row = 0; row < size; row++) {
 		vector<int> r = m.at(row);
-		if(row == 0) {
-			id+= "{\\noindent ";
-		}
 		for(int col = 0; col < size; col++) {
 			id+=to_string(r.at(col));
 			if(col != size-1) {
-				id+="\\textbar ";
+				id+="|";
 			}
 		}
-		if(row == 0) {
-			id+= "}";
-		}
-		id+="\\newline\n";
+		id+="\n";
 	}
 	id+="\n";
 	return id;
@@ -295,7 +289,7 @@ searchResult generalSearch(matrix& initial, matrix& goal, int (*heuristic) (matr
 		if(nodes.size() > maxFrontier) {
 			maxFrontier = nodes.size();
 		}
-		cout << "{\\noindent Best state to expand with depth (g(n)) " << currNode.depth << " and heuristic (h(n)) " << currNode.priority-currNode.depth << "\\newline}" << endl;
+		cout << "Best state to expand with depth (g(n)) " << currNode.depth << " and heuristic (h(n)) " << currNode.priority-currNode.depth << endl;
 		cout << id(currNode.state);
 		//if we have found the goal state, print the search result (I know I could return the values but I dont wan't to have to deal with nonhomogeneous data types)
 		if(currNode.state == goal) {
@@ -542,18 +536,18 @@ void testCases(int (*heuristic) (matrix&, matrix&)) {
 //driver function
 int main() {
 	srand(time(NULL));
-	cout << "{\\noindent What size puzzle would you like to solve?\\newline}" << endl;
+	cout << "What size puzzle would you like to solve?" << endl;
 	int size = 0;
 	cin >> size;
-	cout << "What heuristic would you like to use?\\newline" << endl;
-	cout << "1:\tUniform Cost\\newline" << endl;
-	cout << "2:\tMisplaced Tile\\newline" << endl;
-	cout << "3:\tManhattan Distance\\newline" << endl;
+	cout << "What heuristic would you like to use?" << endl;
+	cout << "1:\tUniform Cost" << endl;
+	cout << "2:\tMisplaced Tile" << endl;
+	cout << "3:\tManhattan Distance" << endl;
 	int heuristic = 0;
 	cin >> heuristic;
-	cout << "Would you like to use your own matrix or a random one?\\newline" << endl;
-	cout << "1:\tUser matrix\\newline" << endl;
-	cout << "2:\tRandom matrix\\newline" << endl;
+	cout << "Would you like to use your own matrix or a random one?" << endl;
+	cout << "1:\tUser matrix" << endl;
+	cout << "2:\tRandom matrix" << endl;
 	int random = 0;
 	cin >> random;
 
@@ -577,11 +571,11 @@ int main() {
 	} else if(heuristic == 3) {
 		solution = generalSearch(initial, goal, &manhattanDistance);
 	}
-	cout << "{\\noindent Solution found\\newline}" << endl;
+	cout << "Solution found" << endl;
 	cout << "Path\\newline" << endl;
 	cout << solution.path;
-	cout << "{\\noindent Depth of solution " << solution.depth << "\\newline}"<< endl;
-	cout << "Number of visited nodes " << solution.visited << "\\newline" << endl;
-	cout << "Max frontier size " << solution.frontier << "\\newline" << endl;
-	cout << "Search took " << solution.time << " milliseconds\\newline" << endl;
+	cout << "Depth of solution " << solution.depth << endl;
+	cout << "Number of visited nodes " << solution.visited << endl;
+	cout << "Max frontier size " << solution.frontier << endl;
+	cout << "Search took " << solution.time << endl;
 }
